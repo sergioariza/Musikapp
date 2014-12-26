@@ -1,0 +1,19 @@
+<!DOCTYPE  html>
+<!--ng-app hace referencia al nombre de nuestro modulo-->
+<html lang="es">
+	<head>
+		<meta charset="UTF-8" />
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+    	<link rel="stylesheet" type="text/css" href="css/signin.css" />
+	</head>
+	<body>
+		<div class="container">
+    		<form class="form-signin" action="/login" method="post">
+        		<h2 class="form-signin-heading">Por favor inicie sesión</h2>
+		        <input type="email" class="form-control" name="username" placeholder="Dirección de correo" required autofocus>
+		        <input type="password" class="form-control" name="password" placeholder="Contraseña" required>
+		        <button class="btn btn-lg btn-primary btn-block" type="submit">Iniciar sesión</button>
+    		</form>
+		</div>
+	</body>
+</html>
