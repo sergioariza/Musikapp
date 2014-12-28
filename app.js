@@ -42,6 +42,8 @@ var UserDetail = new Schema({
 
 var UserDetails = mongoose.model('userInfo', UserDetail);
 
+var infoUser = null;
+
 passport.serializeUser(function(user, done) {
   done(null, user);
 });
@@ -54,13 +56,13 @@ passport.deserializeUser(function(user, done) {
 passport.use(new LocalStrategy(
   function(username, password, done) {
     process.nextTick(function () {
-	  UserDetails.findOne({'username':username},
-		function(err, user) {
-			if (err) { return done(err); }
-			if (!user) { return done(null, false); }
-			if (user.password != password) { return done(null, false); }
-			return done(null, user);
-		});
+    UserDetails.findOne({'username':username},
+    function(err, user) {
+      if (err) { return done(err); }
+      if (!user) { return done(null, false); }
+      if (user.password != password) { return done(null, false); }
+      return done(null, user);
+    });
     });
   }
 ));
@@ -70,30 +72,36 @@ app.get('/', function(req, res) {
 });
 
 app.get('/loginFailure' , function(req, res, next){
-	res.send('Failure to authenticate');
+  res.send('Failure to authenticate');
 });
 
 app.get('/home' , function(req, res, next){
   res.sendfile('public/views/home.html');
 });
 
-app.post('/login',
+/*app.post('/login',
   passport.authenticate('local', {
     successRedirect: '/home',
     failureRedirect: '/loginFailure'
-}));
+}));*/
 
-/*app.post('/login',
+app.post('/login',
   passport.authenticate('local'), function(req, res){
-    res.send(req.user);
-});*/
+    //res.send(req.user);
+    infoUser = req.user;
+    //res.sendfile('public/views/home.html');
+    res.redirect('/home');
+});
 
 app.post('/logout', function(req, res){
-  req.logOut();
+  infoUser = null;
   res.redirect('/');
+});
+
+app.get('/loggedin', function(req, res){
+  res.send(infoUser ? infoUser : '0');
 });
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
-
