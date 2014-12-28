@@ -79,23 +79,15 @@ app.get('/home' , function(req, res, next){
   res.sendfile('public/views/home.html');
 });
 
-/*app.post('/login',
-  passport.authenticate('local', {
-    successRedirect: '/home',
-    failureRedirect: '/loginFailure'
-}));*/
-
 app.post('/login',
   passport.authenticate('local'), function(req, res){
-    //res.send(req.user);
     infoUser = req.user;
-    //res.sendfile('public/views/home.html');
     res.redirect('/home');
 });
 
 app.post('/logout', function(req, res){
   infoUser = null;
-  res.redirect('/');
+  res.sendfile('login.html');
 });
 
 app.get('/loggedin', function(req, res){

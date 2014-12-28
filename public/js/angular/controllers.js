@@ -1,4 +1,15 @@
-app.controller("homeController", function appController($scope){
+app.controller("homeController", function appController($scope, $http, $location, $window){
+	$scope.logout = function()
+	{
+		$http.post("/logout")
+		.success(function(data) {
+		    $window.location = "/";
+		})
+		.error(function(status, data) {
+		    console.log(status);
+		    console.log(data);
+		});
+	}
 });
 
 app.controller("newsController", function newsController($scope){
