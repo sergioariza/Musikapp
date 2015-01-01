@@ -35,21 +35,13 @@ if ('development' == app.get('env')) {
 
 var Schema = mongoose.Schema;
 
+//Login & User API Services
 var UserDetail = new Schema({
     username: String,
     password: String
 }, {collection: 'userInfo'});
 
-var NewsDetails = new Schema({
-    id: Number,
-    name: String,
-    hobby: String,
-    favoriteMusic: String
-}, {collection: 'news'});
-
 var Users = mongoose.model('userInfo', UserDetail);
-var News = mongoose.model('news', NewsDetails);
-
 var infoUser = null;
 
 passport.serializeUser(function(user, done) {
@@ -102,6 +94,16 @@ app.get('/loggedin', function(req, res){
   res.send(infoUser ? infoUser : '0');
 });
 
+//News API Services
+var NewsDetails = new Schema({
+    id: Number,
+    name: String,
+    hobby: String,
+    favoriteMusic: String
+}, {collection: 'news'});
+
+var News = mongoose.model('news', NewsDetails);
+
 app.get('/news', function(req, res){
   if (!infoUser) {
     return res.send(401);
@@ -112,7 +114,7 @@ app.get('/news', function(req, res){
         return res.send(news);
       } else {
         res.statusCode = 500;
-        console.log('Internal error(%d): %s',res.statusCode,err.message);
+        console.log('Internal error(%d): %s', res.statusCode,err.message);
         return res.send({ error: 'Server error' });
       }
   });
@@ -203,6 +205,229 @@ app.delete('/news/:id', function(req, res){
   });
 });
 
+//Shows API Services
+var ShowsDetails = new Schema({
+    id: Number,
+    name: String,
+    hobby: String,
+    favoriteMusic: String
+}, {collection: 'shows'});
+
+var Shows = mongoose.model('shows', ShowsDetails);
+
+app.get('/shows', function(req, res){
+  if (!infoUser) {
+    return res.send(401);
+  }
+
+  return Shows.find(function(err, shows) {
+      if(!err) {
+        return res.send(shows);
+      } else {
+        res.statusCode = 500;
+        console.log('Internal error(%d): %s', res.statusCode,err.message);
+        return res.send({ error: 'Server error' });
+      }
+  });
+});
+
+app.post('/shows', function(req, res){
+  if (!infoUser) {
+    return res.send(401);
+  }
+
+  var shows = new Shows({
+      id:             req.body.id,
+      name:           req.body.name,
+      hobby :         req.body.hobby,
+      favoriteMusic:  req.body.favoriteMusic
+  });
+
+  shows.save(function(err) {
+      if(err) {
+        console.log('Error while saving show: ' + err);
+        res.send({ error:err });
+        return;
+      } else {
+        console.log("Show created");
+        return res.send({ status: 'OK', shows: shows});
+      }
+  });
+});
+
+app.put('/shows/:id', function(req, res){
+  if (!infoUser) {
+    return res.send(401);
+  }
+
+  return Shows.findOne({"id": req.params.id}, function(err, shows) {
+      if(!shows){
+        res.statusCode = 404;
+        return res.send({error: 'Not found'});
+      }
+
+      if (req.body.id != null) shows.id = req.body.id;
+      if (req.body.name != null) shows.name = req.body.name;
+      if (req.body.hobby != null) shows.hobby = req.body.hobby;
+      if (req.body.favoriteMusic != null) shows.favoriteMusic  = req.body.favoriteMusic;
+
+      return shows.save(function(err){
+        if(!err){
+          console.log('Updated');
+          return res.send({ status: 'OK', shows: shows });
+        } else {
+          if(err.name == 'ValidationError') {
+            res.statusCode = 400;
+            res.send({ error: 'Validation error' });
+          } else {
+            res.statusCode = 500;
+            res.send({ error: 'Server error' });
+          }
+
+          console.log('Internal error(%d): %s', res.statusCode, err.message);
+        }
+
+        res.send(shows);
+      });
+  });
+});
+
+app.delete('/shows/:id', function(req, res){
+  if (!infoUser) {
+    return res.send(401);
+  }
+
+  return Shows.findOne({"id": req.params.id}, function(err, shows) {
+    if(!shows){
+      res.statusCode = 404;
+      return res.send({error: 'Not found'});
+    }
+
+    return shows.remove(function(err) {
+      if(!err) {
+        console.log('Removed show');
+        return res.send({ status: 'OK' });
+      } else {
+        res.statusCode = 500;
+        console.log('Internal error(%d): %s', res.statusCode, err.message);
+        return res.send({ error: 'Server error' });
+      }
+    });
+  });
+});
+
+//Videos API Services
+var VideosDetails = new Schema({
+    id: Number,
+    name: String,
+    hobby: String,
+    favoriteMusic: String
+}, {collection: 'videos'});
+
+var Videos = mongoose.model('videos', ShowsDetails);
+
+app.get('/videos', function(req, res){
+  if (!infoUser) {
+    return res.send(401);
+  }
+
+  return Videos.find(function(err, videos) {
+      if(!err) {
+        return res.send(videos);
+      } else {
+        res.statusCode = 500;
+        console.log('Internal error(%d): %s', res.statusCode,err.message);
+        return res.send({ error: 'Server error' });
+      }
+  });
+});
+
+app.post('/videos', function(req, res){
+  if (!infoUser) {
+    return res.send(401);
+  }
+
+  var videos = new Videos({
+      id:             req.body.id,
+      name:           req.body.name,
+      hobby :         req.body.hobby,
+      favoriteMusic:  req.body.favoriteMusic
+  });
+
+  videos.save(function(err) {
+      if(err) {
+        console.log('Error while saving video: ' + err);
+        res.send({ error:err });
+        return;
+      } else {
+        console.log("Video created");
+        return res.send({ status: 'OK', videos: videos});
+      }
+  });
+});
+
+app.put('/videos/:id', function(req, res){
+  if (!infoUser) {
+    return res.send(401);
+  }
+
+  return Videos.findOne({"id": req.params.id}, function(err, videos) {
+      if(!shows){
+        res.statusCode = 404;
+        return res.send({error: 'Not found'});
+      }
+
+      if (req.body.id != null) videos.id = req.body.id;
+      if (req.body.name != null) videos.name = req.body.name;
+      if (req.body.hobby != null) videos.hobby = req.body.hobby;
+      if (req.body.favoriteMusic != null) videos.favoriteMusic  = req.body.favoriteMusic;
+
+      return videos.save(function(err){
+        if(!err){
+          console.log('Updated');
+          return res.send({ status: 'OK', videos: videos });
+        } else {
+          if(err.name == 'ValidationError') {
+            res.statusCode = 400;
+            res.send({ error: 'Validation error' });
+          } else {
+            res.statusCode = 500;
+            res.send({ error: 'Server error' });
+          }
+
+          console.log('Internal error(%d): %s', res.statusCode, err.message);
+        }
+
+        res.send(videos);
+      });
+  });
+});
+
+app.delete('/videos/:id', function(req, res){
+  if (!infoUser) {
+    return res.send(401);
+  }
+
+  return Videos.findOne({"id": req.params.id}, function(err, videos) {
+    if(!videos){
+      res.statusCode = 404;
+      return res.send({error: 'Not found'});
+    }
+
+    return videos.remove(function(err) {
+      if(!err) {
+        console.log('Removed video');
+        return res.send({ status: 'OK' });
+      } else {
+        res.statusCode = 500;
+        console.log('Internal error(%d): %s', res.statusCode, err.message);
+        return res.send({ error: 'Server error' });
+      }
+    });
+  });
+});
+
+//Server creation
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
