@@ -105,14 +105,14 @@ app.controller("newsController", function newsController($scope, $http){
 	};
 })
 
-app.controller("showsController", function showsController($scope){
+app.controller("showsController", function showsController($scope, $http){
 	$http.get("/shows").success(function(data)
 	{
 		$scope.shows = data;
 	});
 })
 
-app.controller("videosController", function videosController($scope){
+app.controller("videosController", function videosController($scope, $http){
 	$http.get("/videos").success(function(data)
 	{
 		$scope.videos = data;
