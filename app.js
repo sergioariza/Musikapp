@@ -40,7 +40,15 @@ var UserDetail = new Schema({
     password: String
 }, {collection: 'userInfo'});
 
-var UserDetails = mongoose.model('userInfo', UserDetail);
+var NewsDetails = new Schema({
+    id: Number,
+    name: String,
+    hobby: String,
+    favoriteMusic: String
+}, {collection: 'news'});
+
+var Users = mongoose.model('userInfo', UserDetail);
+var News = mongoose.model('news', NewsDetails);
 
 var infoUser = null;
 
@@ -56,7 +64,7 @@ passport.deserializeUser(function(user, done) {
 passport.use(new LocalStrategy(
   function(username, password, done) {
     process.nextTick(function () {
-    UserDetails.findOne({'username':username},
+    Users.findOne({'username':username},
     function(err, user) {
       if (err) { return done(err); }
       if (!user) { return done(null, false); }
@@ -92,6 +100,107 @@ app.post('/logout', function(req, res){
 
 app.get('/loggedin', function(req, res){
   res.send(infoUser ? infoUser : '0');
+});
+
+app.get('/news', function(req, res){
+  if (!infoUser) {
+    return res.send(401);
+  }
+
+  return News.find(function(err, news) {
+      if(!err) {
+        return res.send(news);
+      } else {
+        res.statusCode = 500;
+        console.log('Internal error(%d): %s',res.statusCode,err.message);
+        return res.send({ error: 'Server error' });
+      }
+  });
+});
+
+app.post('/news', function(req, res){
+  if (!infoUser) {
+    return res.send(401);
+  }
+
+  var news = new News({
+      id:             req.body.id,
+      name:           req.body.name,
+      hobby :         req.body.hobby,
+      favoriteMusic:  req.body.favoriteMusic
+  });
+
+  news.save(function(err) {
+      if(err) {
+        console.log('Error while saving news: ' + err);
+        res.send({ error:err });
+        return;
+      } else {
+        console.log("News created");
+        return res.send({ status: 'OK', news: news});
+      }
+  });
+});
+
+app.put('/news/:id', function(req, res){
+  if (!infoUser) {
+    return res.send(401);
+  }
+
+  return News.findOne({"id": req.params.id}, function(err, news) {
+      if(!news){
+        res.statusCode = 404;
+        return res.send({error: 'Not found'});
+      }
+
+      if (req.body.id != null) news.id = req.body.id;
+      if (req.body.name != null) news.name = req.body.name;
+      if (req.body.hobby != null) news.hobby = req.body.hobby;
+      if (req.body.favoriteMusic != null) news.favoriteMusic  = req.body.favoriteMusic;
+
+      return news.save(function(err){
+        if(!err){
+          console.log('Updated');
+          return res.send({ status: 'OK', news: news });
+        } else {
+          if(err.name == 'ValidationError') {
+            res.statusCode = 400;
+            res.send({ error: 'Validation error' });
+          } else {
+            res.statusCode = 500;
+            res.send({ error: 'Server error' });
+          }
+
+          console.log('Internal error(%d): %s', res.statusCode, err.message);
+        }
+
+        res.send(news);
+      });
+  });
+});
+
+app.delete('/news/:id', function(req, res){
+  if (!infoUser) {
+    return res.send(401);
+  }
+
+  return News.findOne({"id": req.params.id}, function(err, news) {
+    if(!news){
+      res.statusCode = 404;
+      return res.send({error: 'Not found'});
+    }
+
+    return news.remove(function(err) {
+      if(!err) {
+        console.log('Removed news');
+        return res.send({ status: 'OK' });
+      } else {
+        res.statusCode = 500;
+        console.log('Internal error(%d): %s', res.statusCode, err.message);
+        return res.send({ error: 'Server error' });
+      }
+    });
+  });
 });
 
 http.createServer(app).listen(app.get('port'), function(){

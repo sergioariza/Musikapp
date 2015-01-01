@@ -11,7 +11,6 @@ var checkLoggedin = function($q, $timeout, $http, $location, $window){
 			$timeout(deferred.resolve, 0);
 		}
 		else {
-			//$timeout(function(){ deferred.reject(); }, 0);
 			$http.post("/logout").success(function(data) {
 				$timeout(function(){ deferred.reject(); }, 0);
 		        $window.location = "/";
