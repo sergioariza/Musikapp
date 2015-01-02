@@ -100,7 +100,7 @@ var NewsDetails = new Schema({
     name: String,
     hobby: String,
     favoriteMusic: String
-}, {collection: 'news'});
+}, {collection: 'news', versionKey: false});
 
 var News = mongoose.model('news', NewsDetails);
 
@@ -211,7 +211,7 @@ var ShowsDetails = new Schema({
     name: String,
     hobby: String,
     favoriteMusic: String
-}, {collection: 'shows'});
+}, {collection: 'shows', versionKey: false});
 
 var Shows = mongoose.model('shows', ShowsDetails);
 
@@ -322,7 +322,7 @@ var VideosDetails = new Schema({
     name: String,
     hobby: String,
     favoriteMusic: String
-}, {collection: 'videos'});
+}, {collection: 'videos', versionKey: false});
 
 var Videos = mongoose.model('videos', ShowsDetails);
 

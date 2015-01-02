@@ -20,9 +20,8 @@
   </head>
 
   <body>
-    <!--añadimos aquí el controlador appController ya que será donde mostremos los usuarios-->
+    <!-- Añadimos aquí el controlador -->
 	<div class="row" ng-controller="homeController">
-	    <!-- Fixed navbar -->
 	    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
 	      <div class="container">
 	        <div class="navbar-header">
@@ -40,13 +39,12 @@
 	            <li><a href="#/news">Noticias</a></li>
 	            <li><a href="#/shows">Conciertos</a></li>
 	            <li><a href="#/videos">Vídeos</a></li>
-	            <li style="line-height: 46px; margin-left: 16px;"><button type="button" class="btn btn-default" ng-click="logout()">Logout</button></li>
+	            <li style="line-height: 47px; margin-left: 16px;"><button type="button" class="btn btn-default" ng-click="logout()">Logout</button></li>
 	          </ul>
 	        </div>
 	      </div>
 	    </nav>
 
-		<!-- Views -->
 		<div ng-view></div>
 	</div>
 
@@ -54,9 +52,9 @@
     <script type="text/javascript" src="../js/bootstrap.min.js"></script>
     <script type="text/javascript" src="../js/angular/angular.min.js"></script>
 	<script type="text/javascript" src="../js/angular/angular-route.min.js"></script>
-	<script type="text/javascript" src="../js/angular/app.js"></script>
-	<!--<script type="text/javascript" src="../js/angular/services.js"></script>-->
+	<script type="text/javascript" src="../js/angular/mainConfig.js"></script>
 	<script type="text/javascript" src="../js/angular/controllers.js"></script>
+	<script type="text/javascript" src="../js/angular/services.js"></script>
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="../assets/js/ie10-viewport-bug-workaround.js"></script>

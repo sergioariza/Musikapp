@@ -1,8 +1,7 @@
-app.controller("homeController", function appController($scope, $http, $location, $window){
+app.controller("homeController", function appController($scope, $http, $location, $window, UserServices){
 	$scope.logout = function()
 	{
-		$http.post("/logout")
-		.success(function(data) {
+		UserServices.logout().success(function(data){
 		    $window.location = "/";
 		})
 		.error(function(status, data) {
@@ -12,9 +11,8 @@ app.controller("homeController", function appController($scope, $http, $location
 	}
 });
 
-app.controller("newsController", function newsController($scope, $http){
-	$http.get("/news").success(function(data)
-	{
+app.controller("newsController", function newsController($scope, $http, NewsServices){
+	NewsServices.getAllNews().success(function(data){
 		$scope.news = data;
 	});
 
@@ -26,7 +24,7 @@ app.controller("newsController", function newsController($scope, $http){
 	$scope.operationInProgress = false;
 	$scope.incomplete = false;
 
-	$scope.editUser = function(id) {
+	$scope.editItem = function(id) {
 		if (id == 'new') {
 			$scope.edit = false;
 			$scope.incomplete = true;
@@ -45,7 +43,7 @@ app.controller("newsController", function newsController($scope, $http){
 		$scope.operationInProgress = true;
 	};
 
-	$scope.saveUser = function() {
+	$scope.saveItem = function() {
 		if($scope.edit){
 			var found = false;
 			for (var i = 0; i < $scope.news.length; i++) {
@@ -59,15 +57,15 @@ app.controller("newsController", function newsController($scope, $http){
 			}
 
 			if (found) {
-				addOrModifyUser();
+				addOrModifyItem();
 			}		    
 		}else{
-			addOrModifyUser();
+			addOrModifyItem();
 		}
 	};
 
-	function addOrModifyUser(){
-		var newUser = {id: $scope.id, name: $scope.name, hobby: $scope.hobby, favoriteMusic: $scope.favoriteMusic};
+	function addOrModifyItem(){
+		var newItem = {id: $scope.id, name: $scope.name, hobby: $scope.hobby, favoriteMusic: $scope.favoriteMusic};
 			
 		$scope.id = -1;
 		$scope.name = '';
@@ -76,10 +74,10 @@ app.controller("newsController", function newsController($scope, $http){
 		$scope.operationInProgress = false;
 
 		if($scope.edit){
-			$http.put("/news/" + newUser.id, newUser);
+			NewsServices.updateNews(newItem);
 		}else{
-			$scope.news.push(newUser);
-			$http.post("/news", newUser);
+			$scope.news.push(newItem);
+			NewsServices.createNews(newItem);
 		}
 	}
 
@@ -88,7 +86,7 @@ app.controller("newsController", function newsController($scope, $http){
 	        
 	    if (index !== -1) {
 	        $scope.news.splice(index, 1);
-	        $http.delete("/news/" + id);
+	        NewsServices.removeNews(id);
 	    }
     }
 
@@ -105,16 +103,188 @@ app.controller("newsController", function newsController($scope, $http){
 	};
 })
 
-app.controller("showsController", function showsController($scope, $http){
-	$http.get("/shows").success(function(data)
+app.controller("showsController", function showsController($scope, $http, ShowsServices){
+	ShowsServices.getAllShows().success(function(data)
 	{
 		$scope.shows = data;
 	});
+
+	$scope.id = -1;
+	$scope.name = '';
+	$scope.hobby = '';
+	$scope.favoriteMusic = '';
+	$scope.edit = true;
+	$scope.operationInProgress = false;
+	$scope.incomplete = false;
+
+	$scope.editItem = function(id) {
+		if (id == 'new') {
+			$scope.edit = false;
+			$scope.incomplete = true;
+			$scope.id = $scope.shows.length;
+			$scope.name = '';
+			$scope.hobby = '';
+			$scope.favoriteMusic = '';
+		} else {
+			$scope.edit = true;
+			$scope.id = $scope.shows[id].id;
+			$scope.name = $scope.shows[id].name;
+			$scope.hobby = $scope.shows[id].hobby;
+			$scope.favoriteMusic = $scope.shows[id].favoriteMusic;
+		}
+
+		$scope.operationInProgress = true;
+	};
+
+	$scope.saveItem = function() {
+		if($scope.edit){
+			var found = false;
+			for (var i = 0; i < $scope.shows.length; i++) {
+				if ($scope.shows[i].id == $scope.id) {
+				    $scope.shows[i].name = $scope.name;
+			    	$scope.shows[i].hobby = $scope.hobby;
+			    	$scope.shows[i].favoriteMusic = $scope.favoriteMusic;
+				    found = true;
+				    break;
+				}
+			}
+
+			if (found) {
+				addOrModifyItem();
+			}		    
+		}else{
+			addOrModifyItem();
+		}
+	};
+
+	function addOrModifyItem(){
+		var newItem = {id: $scope.id, name: $scope.name, hobby: $scope.hobby, favoriteMusic: $scope.favoriteMusic};
+			
+		$scope.id = -1;
+		$scope.name = '';
+		$scope.hobby = '';
+		$scope.favoriteMusic = '';
+		$scope.operationInProgress = false;
+
+		if($scope.edit){
+			ShowsServices.updateShows(newItem);
+		}else{
+			$scope.shows.push(newItem);
+			ShowsServices.createShows(newItem);
+		}
+	}
+
+	$scope.removeItem = function removeItem(row, id) {
+	    var index = $scope.shows.indexOf(row);
+	        
+	    if (index !== -1) {
+	        $scope.shows.splice(index, 1);
+	        ShowsServices.removeShows(id);
+	    }
+    }
+
+	$scope.$watch('name', function() {$scope.test();});
+	$scope.$watch('hobby', function() {$scope.test();});
+	$scope.$watch('favoriteMusic', function() {$scope.test();});
+
+	$scope.test = function() {
+		$scope.incomplete = false;
+
+		if (!$scope.name.length || !$scope.hobby.length || !$scope.favoriteMusic.length || !$scope.operationInProgress){
+			$scope.incomplete = true;
+		}
+	};
 })
 
-app.controller("videosController", function videosController($scope, $http){
-	$http.get("/videos").success(function(data)
+app.controller("videosController", function videosController($scope, $http, VideosServices){
+	VideosServices.getAllVideos().success(function(data)
 	{
 		$scope.videos = data;
 	});
+
+	$scope.id = -1;
+	$scope.name = '';
+	$scope.hobby = '';
+	$scope.favoriteMusic = '';
+	$scope.edit = true;
+	$scope.operationInProgress = false;
+	$scope.incomplete = false;
+
+	$scope.editItem = function(id) {
+		if (id == 'new') {
+			$scope.edit = false;
+			$scope.incomplete = true;
+			$scope.id = $scope.videos.length;
+			$scope.name = '';
+			$scope.hobby = '';
+			$scope.favoriteMusic = '';
+		} else {
+			$scope.edit = true;
+			$scope.id = $scope.videos[id].id;
+			$scope.name = $scope.videos[id].name;
+			$scope.hobby = $scope.videos[id].hobby;
+			$scope.favoriteMusic = $scope.videos[id].favoriteMusic;
+		}
+
+		$scope.operationInProgress = true;
+	};
+
+	$scope.saveItem = function() {
+		if($scope.edit){
+			var found = false;
+			for (var i = 0; i < $scope.videos.length; i++) {
+				if ($scope.videos[i].id == $scope.id) {
+				    $scope.videos[i].name = $scope.name;
+			    	$scope.videos[i].hobby = $scope.hobby;
+			    	$scope.videos[i].favoriteMusic = $scope.favoriteMusic;
+				    found = true;
+				    break;
+				}
+			}
+
+			if (found) {
+				addOrModifyItem();
+			}		    
+		}else{
+			addOrModifyItem();
+		}
+	};
+
+	function addOrModifyItem(){
+		var newItem = {id: $scope.id, name: $scope.name, hobby: $scope.hobby, favoriteMusic: $scope.favoriteMusic};
+			
+		$scope.id = -1;
+		$scope.name = '';
+		$scope.hobby = '';
+		$scope.favoriteMusic = '';
+		$scope.operationInProgress = false;
+
+		if($scope.edit){
+			VideosServices.updateVideos(newItem);
+		}else{
+			$scope.videos.push(newItem);
+			VideosServices.createVideos(newItem);
+		}
+	}
+
+	$scope.removeItem = function removeItem(row, id) {
+	    var index = $scope.videos.indexOf(row);
+	        
+	    if (index !== -1) {
+	        $scope.videos.splice(index, 1);
+	        VideosServices.removeVideos(id);
+	    }
+    }
+
+	$scope.$watch('name', function() {$scope.test();});
+	$scope.$watch('hobby', function() {$scope.test();});
+	$scope.$watch('favoriteMusic', function() {$scope.test();});
+
+	$scope.test = function() {
+		$scope.incomplete = false;
+
+		if (!$scope.name.length || !$scope.hobby.length || !$scope.favoriteMusic.length || !$scope.operationInProgress){
+			$scope.incomplete = true;
+		}
+	};
 })

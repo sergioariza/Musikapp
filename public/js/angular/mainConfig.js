@@ -1,17 +1,23 @@
-//var services = angular.module('services', []);
+//Creamos nuestro modulo de aplicación AngularJS llamado "app"
+//y módulo de servicios llamado "appServices"
+var app = angular.module("app", ['ngRoute', 'appServices']);
+var appServices = angular.module('appServices', []);
 
-//Creamos nuestro modulo llamado app
-var app = angular.module("app", ['ngRoute']);
+/*
+var options = {};
+options.api = {};
+options.api.base_url = "http://localhost:3001";
+*/
 
-var checkLoggedin = function($q, $timeout, $http, $location, $window){
+var checkLoggedin = function($q, $timeout, $http, $location, $window, UserServices){
 	var deferred = $q.defer();
 		
-	$http.get('/loggedin').success(function(user){
+	UserServices.loggedin().success(function(user){
 		if (user !== '0'){
 			$timeout(deferred.resolve, 0);
 		}
 		else {
-			$http.post("/logout").success(function(data) {
+			UserServices.logout().success(function(data) {
 				$timeout(function(){ deferred.reject(); }, 0);
 		        $window.location = "/";
 		    }).error(function(status, data) {

@@ -1,20 +1,61 @@
-var options = {};
-options.api = {};
-options.api.base_url = "http://localhost:3001";
-
-/*services.factory('AuthenticationService', function() {
-    var auth = {
-        isAuthenticated: false,
-        isAdmin: false
-    }   
-
-    return auth;
-});*/
-
-services.factory('UserService', function ($http) {
+appServices.factory('UserServices', function($http) {
     return {
-        logOut: function() {
-            return $http.get(options.api.base_url + '/logout');
+        logout: function() {
+            return $http.post('/logout');
+        },
+        loggedin: function() {
+            return $http.get('/loggedin');
         }
-    }
+    };
+});
+
+appServices.factory('NewsServices', function($http) {
+    return {
+    	getAllNews: function() {
+            return $http.get("/news");
+        },
+        updateNews: function(newItem) {
+            return $http.put("/news/" + newItem.id, newItem);
+        },
+        createNews: function(newItem) {
+            return $http.post("/news", newItem);
+        },
+        removeNews: function(id) {
+            return $http.delete("/news/" + id);
+        }
+    };
+});
+
+appServices.factory('ShowsServices', function($http) {
+    return {
+    	getAllShows: function() {
+            return $http.get("/shows");
+        },
+        updateShows: function(newItem) {
+            return $http.put("/shows/" + newItem.id, newItem);
+        },
+        createShows: function(newItem) {
+            return $http.post("/shows", newItem);
+        },
+        removeShows: function(id) {
+            return $http.delete("/shows/" + id);
+        }
+    };
+});
+
+appServices.factory('VideosServices', function($http) {
+    return {
+    	getAllVideos: function() {
+            return $http.get("/videos");
+        },
+        updateVideos: function(newItem) {
+            return $http.put("/videos/" + newItem.id, newItem);
+        },
+        createVideos: function(newItem) {
+            return $http.post("/videos", newItem);
+        },
+        removeVideos: function(id) {
+            return $http.delete("/videos/" + id);
+        }
+    };
 });
