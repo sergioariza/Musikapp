@@ -2,6 +2,7 @@ app.controller("homeController", function appController($scope, $http, $location
 	$scope.logout = function()
 	{
 		UserServices.logout().success(function(data){
+			delete $window.sessionStorage.token;
 		    $window.location = "/";
 		})
 		.error(function(status, data) {
@@ -11,9 +12,19 @@ app.controller("homeController", function appController($scope, $http, $location
 	}
 });
 
-app.controller("newsController", function newsController($scope, $http, NewsServices){
+app.controller("newsController", function newsController($scope, $http, $window, NewsServices, UserServices){
 	NewsServices.getAllNews().success(function(data){
 		$scope.news = data;
+	})
+	.error(function(status, data) {
+		UserServices.logout().success(function(data){
+			delete $window.sessionStorage.token;
+		    $window.location = "/";
+		})
+		.error(function(status, data) {
+		    console.log(status);
+		    console.log(data);
+		});
 	});
 
 	$scope.id = -1;
@@ -103,10 +114,20 @@ app.controller("newsController", function newsController($scope, $http, NewsServ
 	};
 })
 
-app.controller("showsController", function showsController($scope, $http, ShowsServices){
+app.controller("showsController", function showsController($scope, $http, $window, ShowsServices, UserServices){
 	ShowsServices.getAllShows().success(function(data)
 	{
 		$scope.shows = data;
+	})
+	.error(function(status, data) {
+		UserServices.logout().success(function(data){
+			delete $window.sessionStorage.token;
+		    $window.location = "/";
+		})
+		.error(function(status, data) {
+		    console.log(status);
+		    console.log(data);
+		});
 	});
 
 	$scope.id = -1;
@@ -196,10 +217,20 @@ app.controller("showsController", function showsController($scope, $http, ShowsS
 	};
 })
 
-app.controller("videosController", function videosController($scope, $http, VideosServices){
+app.controller("videosController", function videosController($scope, $http, $window, VideosServices, UserServices){
 	VideosServices.getAllVideos().success(function(data)
 	{
 		$scope.videos = data;
+	})
+	.error(function(status, data) {
+		UserServices.logout().success(function(data){
+			delete $window.sessionStorage.token;
+		    $window.location = "/";
+		})
+		.error(function(status, data) {
+		    console.log(status);
+		    console.log(data);
+		});
 	});
 
 	$scope.id = -1;

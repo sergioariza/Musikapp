@@ -2,9 +2,6 @@ appServices.factory('UserServices', function($http) {
     return {
         logout: function() {
             return $http.post('/logout');
-        },
-        loggedin: function() {
-            return $http.get('/loggedin');
         }
     };
 });
@@ -13,6 +10,7 @@ appServices.factory('NewsServices', function($http) {
     return {
     	getAllNews: function() {
             return $http.get("/news");
+            //return $http({url: '/news', method: 'GET'})
         },
         updateNews: function(newItem) {
             return $http.put("/news/" + newItem.id, newItem);

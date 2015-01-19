@@ -9,6 +9,7 @@ options.api = {};
 options.api.base_url = "http://localhost:3001";
 */
 
+/*
 var checkLoggedin = function($q, $timeout, $http, $location, $window, UserServices){
 	var deferred = $q.defer();
 		
@@ -19,6 +20,7 @@ var checkLoggedin = function($q, $timeout, $http, $location, $window, UserServic
 		else {
 			UserServices.logout().success(function(data) {
 				$timeout(function(){ deferred.reject(); }, 0);
+				delete $window.sessionStorage.token;
 		        $window.location = "/";
 		    }).error(function(status, data) {
 		            console.log(status);
@@ -30,40 +32,85 @@ var checkLoggedin = function($q, $timeout, $http, $location, $window, UserServic
 		
 	return deferred.promise;
 };
+*/
+
+var isLogged = function($q, $timeout, $http, $location, $window, UserServices){
+	if(!$window.sessionStorage.token){
+		UserServices.logout()
+		.success(function(data) {
+			$timeout(function(){ deferred.reject(); }, 0);
+			delete $window.sessionStorage.token;
+		    $window.location = "/";
+		})
+		.error(function(status, data) {
+		    console.log(status);
+		    console.log(data);
+		});
+	}
+};
 
 //Hacemos el ruteo de nuestra aplicación
 app.config(function($routeProvider){
 	$routeProvider
 	.when("/", {
-		title: 'Home',
+		title: 'Musikapp - Inicio',
 		templateUrl : "views/templates/index.html",
-		resolve: {
-			loggedin: checkLoggedin
-		}
+		resolve: {loggedin: isLogged}
 	})
 	.when('/news', {
-		title: 'Noticias',
+		title: 'Musikapp - Noticias',
 		templateUrl : "views/templates/news.html",
 		controller : "newsController",
-		resolve: {
-			loggedin: checkLoggedin
-		}
+		resolve: {loggedin: isLogged}
     })
 	.when("/shows", {
-		title: 'Conciertos',
+		title: 'Musikapp - Conciertos',
 		templateUrl : "views/templates/shows.html",
 		controller : "showsController",
-		resolve: {
-			loggedin: checkLoggedin
-		}
+		resolve: {loggedin: isLogged}
 	})
 	.when("/videos", {
-		title: 'Vídeos',
+		title: 'Musikapp - Vídeos',
 		templateUrl : "views/templates/videos.html",
 		controller : "videosController",
-		resolve: {
-			loggedin: checkLoggedin
-		}
+		resolve: {loggedin: isLogged}
 	})
  	.otherwise({ redirectTo : "/"})
 });
+
+app.factory('authInterceptor', function ($rootScope, $q, $window) {
+  return {
+    request: function (config) {
+      config.headers = config.headers || {};
+      if ($window.sessionStorage.token) {
+        config.headers.Authorization = 'Bearer ' + $window.sessionStorage.token;
+      }
+      return config;
+    },
+    response: function (response) {
+      if (response.status === 401) {
+      	// handle the case where the user is not authenticated
+        UserServices.logout().success(function(data) {
+			$timeout(function(){ deferred.reject(); }, 0);
+			delete $window.sessionStorage.token;
+		    $window.location = "/";
+		}).error(function(status, data) {
+		        console.log(status);
+		        console.log(data);
+		    }
+		);
+      }
+      return response || $q.when(response);
+    }
+  };
+});
+
+app.config(function ($httpProvider) {
+  $httpProvider.interceptors.push('authInterceptor');
+});
+
+app.run(['$location', '$rootScope', function($location, $rootScope) {
+    $rootScope.$on('$routeChangeSuccess', function (event, current, previous) {
+        $rootScope.title = current.$$route.title;
+    });
+}]);

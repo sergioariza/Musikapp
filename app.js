@@ -9,10 +9,12 @@ var path = require('path');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var mongoose = require('mongoose');
-
+var expressJwt = require('express-jwt');
+var jwt = require('jsonwebtoken');
+var bodyParser = require('body-parser');
+var app = express();
 
 mongoose.connect('mongodb://localhost/MyDatabase');
-var app = express();
 
 // all environments
 app.set('port', process.env.PORT || 3001);
@@ -25,8 +27,23 @@ app.use(express.urlencoded());
 app.use(express.methodOverride());
 app.use(passport.initialize());
 app.use(passport.session()); 
-app.use(app.router);
+//app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
+
+//-->
+var secret = 'this is the secret secret secret 12356';
+app.use('/news', expressJwt({secret: secret}));
+app.use('/shows', expressJwt({secret: secret}));
+app.use('/videos', expressJwt({secret: secret}));
+app.use(bodyParser.json());
+app.use('/', express.static(__dirname + '/'));
+
+app.use(function(err, req, res, next){
+  if (err.constructor.name === 'UnauthorizedError') {
+    res.status(401).send('Unauthorized');
+  }
+});
+//<--
 
 // development only
 if ('development' == app.get('env')) {
@@ -42,7 +59,6 @@ var UserDetail = new Schema({
 }, {collection: 'userInfo'});
 
 var Users = mongoose.model('userInfo', UserDetail);
-var infoUser = null;
 
 passport.serializeUser(function(user, done) {
   done(null, user);
@@ -51,7 +67,6 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(user, done) {
   done(null, user);
 });
-
 
 passport.use(new LocalStrategy(
   function(username, password, done) {
@@ -75,23 +90,19 @@ app.get('/loginFailure' , function(req, res, next){
   res.send('Failure to authenticate');
 });
 
-app.get('/home' , function(req, res, next){
-  res.sendfile('public/views/home.html');
-});
-
 app.post('/login',
   passport.authenticate('local'), function(req, res){
-    infoUser = req.user;
+    var token = jwt.sign(req.user.username, secret, { expiresInMinutes: 60 });
+    res.json({ token: token });
     res.redirect('/home');
 });
 
 app.post('/logout', function(req, res){
-  infoUser = null;
   res.sendfile('login.html');
 });
 
-app.get('/loggedin', function(req, res){
-  res.send(infoUser ? infoUser : '0');
+app.get('/home' , function(req, res, next){
+  res.sendfile('public/views/home.html');
 });
 
 //News API Services
@@ -105,10 +116,6 @@ var NewsDetails = new Schema({
 var News = mongoose.model('news', NewsDetails);
 
 app.get('/news', function(req, res){
-  if (!infoUser) {
-    return res.send(401);
-  }
-
   return News.find(function(err, news) {
       if(!err) {
         return res.send(news);
@@ -121,10 +128,6 @@ app.get('/news', function(req, res){
 });
 
 app.post('/news', function(req, res){
-  if (!infoUser) {
-    return res.send(401);
-  }
-
   var news = new News({
       id:             req.body.id,
       name:           req.body.name,
@@ -145,10 +148,6 @@ app.post('/news', function(req, res){
 });
 
 app.put('/news/:id', function(req, res){
-  if (!infoUser) {
-    return res.send(401);
-  }
-
   return News.findOne({"id": req.params.id}, function(err, news) {
       if(!news){
         res.statusCode = 404;
@@ -182,10 +181,6 @@ app.put('/news/:id', function(req, res){
 });
 
 app.delete('/news/:id', function(req, res){
-  if (!infoUser) {
-    return res.send(401);
-  }
-
   return News.findOne({"id": req.params.id}, function(err, news) {
     if(!news){
       res.statusCode = 404;
@@ -216,10 +211,6 @@ var ShowsDetails = new Schema({
 var Shows = mongoose.model('shows', ShowsDetails);
 
 app.get('/shows', function(req, res){
-  if (!infoUser) {
-    return res.send(401);
-  }
-
   return Shows.find(function(err, shows) {
       if(!err) {
         return res.send(shows);
@@ -232,10 +223,6 @@ app.get('/shows', function(req, res){
 });
 
 app.post('/shows', function(req, res){
-  if (!infoUser) {
-    return res.send(401);
-  }
-
   var shows = new Shows({
       id:             req.body.id,
       name:           req.body.name,
@@ -256,10 +243,6 @@ app.post('/shows', function(req, res){
 });
 
 app.put('/shows/:id', function(req, res){
-  if (!infoUser) {
-    return res.send(401);
-  }
-
   return Shows.findOne({"id": req.params.id}, function(err, shows) {
       if(!shows){
         res.statusCode = 404;
@@ -293,10 +276,6 @@ app.put('/shows/:id', function(req, res){
 });
 
 app.delete('/shows/:id', function(req, res){
-  if (!infoUser) {
-    return res.send(401);
-  }
-
   return Shows.findOne({"id": req.params.id}, function(err, shows) {
     if(!shows){
       res.statusCode = 404;
@@ -327,10 +306,6 @@ var VideosDetails = new Schema({
 var Videos = mongoose.model('videos', ShowsDetails);
 
 app.get('/videos', function(req, res){
-  if (!infoUser) {
-    return res.send(401);
-  }
-
   return Videos.find(function(err, videos) {
       if(!err) {
         return res.send(videos);
@@ -343,10 +318,6 @@ app.get('/videos', function(req, res){
 });
 
 app.post('/videos', function(req, res){
-  if (!infoUser) {
-    return res.send(401);
-  }
-
   var videos = new Videos({
       id:             req.body.id,
       name:           req.body.name,
@@ -367,10 +338,6 @@ app.post('/videos', function(req, res){
 });
 
 app.put('/videos/:id', function(req, res){
-  if (!infoUser) {
-    return res.send(401);
-  }
-
   return Videos.findOne({"id": req.params.id}, function(err, videos) {
       if(!shows){
         res.statusCode = 404;
@@ -404,10 +371,6 @@ app.put('/videos/:id', function(req, res){
 });
 
 app.delete('/videos/:id', function(req, res){
-  if (!infoUser) {
-    return res.send(401);
-  }
-
   return Videos.findOne({"id": req.params.id}, function(err, videos) {
     if(!videos){
       res.statusCode = 404;
