@@ -1,0 +1,1 @@
+exports.secretToken = 'this is the secret secret secret 12356';

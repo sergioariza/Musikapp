@@ -8,13 +8,13 @@ var http = require('http');
 var path = require('path');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
-var mongoose = require('mongoose');
 var expressJwt = require('express-jwt');
 var jwt = require('jsonwebtoken');
 var bodyParser = require('body-parser');
 var app = express();
-
-mongoose.connect('mongodb://localhost/MyDatabase');
+var mongoose = require('./api/db/mongo_database.js');
+var secret = require('./api/secret.js');
+var Schema = mongoose.Schema;
 
 // all environments
 app.set('port', process.env.PORT || 3001);
@@ -26,15 +26,11 @@ app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.methodOverride());
 app.use(passport.initialize());
-app.use(passport.session()); 
-//app.use(app.router);
+app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
-
-//-->
-var secret = 'this is the secret secret secret 12356';
-app.use('/news', expressJwt({secret: secret}));
-app.use('/shows', expressJwt({secret: secret}));
-app.use('/videos', expressJwt({secret: secret}));
+app.use('/news', expressJwt({secret: secret.secretToken}));
+app.use('/shows', expressJwt({secret: secret.secretToken}));
+app.use('/videos', expressJwt({secret: secret.secretToken}));
 app.use(bodyParser.json());
 app.use('/', express.static(__dirname + '/'));
 
@@ -43,23 +39,19 @@ app.use(function(err, req, res, next){
     res.status(401).send('Unauthorized');
   }
 });
-//<--
 
 // development only
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-var Schema = mongoose.Schema;
+//Models
+var Users = require('./api/db/models/UsersModel.js');
+var News = require('./api/db/models/NewsModel.js');
+var Shows = require('./api/db/models/ShowsModel.js');
+var Videos = require('./api/db/models/VideosModel.js');
 
-//Login & User API Services
-var UserDetail = new Schema({
-    username: String,
-    password: String
-}, {collection: 'userInfo'});
-
-var Users = mongoose.model('userInfo', UserDetail);
-
+//Passport config
 passport.serializeUser(function(user, done) {
   done(null, user);
 });
@@ -71,17 +63,18 @@ passport.deserializeUser(function(user, done) {
 passport.use(new LocalStrategy(
   function(username, password, done) {
     process.nextTick(function () {
-    Users.findOne({'username':username},
-    function(err, user) {
-      if (err) { return done(err); }
-      if (!user) { return done(null, false); }
-      if (user.password != password) { return done(null, false); }
-      return done(null, user);
-    });
+      Users.findOne({'username':username},
+      function(err, user) {
+        if (err) { return done(err); }
+        if (!user) { return done(null, false); }
+        if (user.password != password) { return done(null, false); }
+        return done(null, user);
+      });
     });
   }
 ));
 
+//Login API
 app.get('/', function(req, res) {
   res.sendfile('login.html');
 });
@@ -92,7 +85,7 @@ app.get('/loginFailure' , function(req, res, next){
 
 app.post('/login',
   passport.authenticate('local'), function(req, res){
-    var token = jwt.sign(req.user.username, secret, { expiresInMinutes: 60 });
+    var token = jwt.sign(req.user.username, secret.secretToken, { expiresInMinutes: 60 });
     res.json({ token: token });
     res.redirect('/home');
 });
@@ -106,15 +99,6 @@ app.get('/home' , function(req, res, next){
 });
 
 //News API Services
-var NewsDetails = new Schema({
-    id: Number,
-    name: String,
-    hobby: String,
-    favoriteMusic: String
-}, {collection: 'news', versionKey: false});
-
-var News = mongoose.model('news', NewsDetails);
-
 app.get('/news', function(req, res){
   return News.find(function(err, news) {
       if(!err) {
@@ -201,15 +185,6 @@ app.delete('/news/:id', function(req, res){
 });
 
 //Shows API Services
-var ShowsDetails = new Schema({
-    id: Number,
-    name: String,
-    hobby: String,
-    favoriteMusic: String
-}, {collection: 'shows', versionKey: false});
-
-var Shows = mongoose.model('shows', ShowsDetails);
-
 app.get('/shows', function(req, res){
   return Shows.find(function(err, shows) {
       if(!err) {
@@ -296,15 +271,6 @@ app.delete('/shows/:id', function(req, res){
 });
 
 //Videos API Services
-var VideosDetails = new Schema({
-    id: Number,
-    name: String,
-    hobby: String,
-    favoriteMusic: String
-}, {collection: 'videos', versionKey: false});
-
-var Videos = mongoose.model('videos', ShowsDetails);
-
 app.get('/videos', function(req, res){
   return Videos.find(function(err, videos) {
       if(!err) {
