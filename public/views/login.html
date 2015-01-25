@@ -1,0 +1,28 @@
+<!DOCTYPE  html>
+<html lang="es" ng-app="app">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/signin.css" />
+    <link rel="icon" type="image/x-icon" href="./public/assets/favicon.ico">
+</head>
+
+<body>
+    <div class="container" ng-controller="UserCtrl">
+        <form class="form-signin" ng-submit="submit()">
+            <h2 class="form-signin-heading">Por favor inicie sesión</h2>
+            <input type="email" class="form-control" ng-model="user.username" name="username" placeholder="Dirección de correo" required autofocus>
+            <input type="password" class="form-control" ng-model="user.password" name="password" placeholder="Contraseña" required>
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Iniciar sesión</button>
+        </form>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/angular/angular.min.js"></script>
+    <script type="text/javascript" src="js/angular/angular-route.min.js"></script>
+    <script type="text/javascript" src="js/login.js"></script>
+</body>
+
+</html>
