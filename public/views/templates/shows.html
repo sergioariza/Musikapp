@@ -12,8 +12,8 @@
                     <th>Fecha</th>
                     <th>Hora</th>
                     <th>Publicación </th>
-                    <th>Google Map</th>
-                    <th>Foto</th>
+                    <th>¿Google Map?</th>
+                    <th>¿Cartel?</th>
                     <th>Editar</th>
                     <th>Eliminar</th>
                 </tr>
@@ -27,10 +27,16 @@
                     <td>{{ x.dateShow }}</td>
                     <td>{{ x.hourShow }}</td>
                     <td>{{ x.datePublished }}</td>
-                    <td>{{ x.linkGoogleMaps }}</td>
-                    <td>{{ x.photoURL }}</td>
+                    <td style="text-align: center;">
+                        <span ng-if="x.linkGoogleMaps != ''">Sí</span>
+                        <span ng-if="x.linkGoogleMaps == ''">No</span>
+                    </td>
+                    <td style="text-align: center;">
+                        <span ng-if="x.photoURL != ''">Sí</span>
+                        <span ng-if="x.photoURL == ''">No</span>
+                    </td>
                     <td width="90">
-                        <button class="btn" ng-click="editItem(x.id)">
+                        <button class="btn btn-warning" ng-click="editItem(x.id)">
                             <span class="glyphicon glyphicon-pencil"></span> &nbsp;&nbsp;Editar
                         </button>
                     </td>

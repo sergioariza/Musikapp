@@ -194,6 +194,8 @@ app.controller("showsController", function showsController($scope, $http, $windo
             $scope.datePublished = $scope.shows[id].datePublished;
             $scope.linkGoogleMaps = $scope.shows[id].linkGoogleMaps;
             $scope.photoURL = $scope.shows[id].photoURL;
+            $('#location-address').val($scope.linkGoogleMaps);
+            $('#map-address-btn').click();
         }
 
         $scope.operationInProgress = true;
