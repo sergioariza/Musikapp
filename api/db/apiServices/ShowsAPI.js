@@ -1,9 +1,17 @@
 module.exports = function(app) {
     //Shows model
     var Shows = require('../models/ShowsModel.js');
+    var expressJwt = require('express-jwt');
+    var secret = require('../../secret.js');
 
-    app.get('/shows', function(req, res) {
-        return Shows.find(function(err, shows) {
+    app.use('/shows', expressJwt({
+        secret: secret.secretToken
+    }));
+    
+    app.get('/shows/:user', function(req, res) {
+        return Shows.find({
+            "user": req.params.user
+        }, function(err, shows) {
             if (!err) {
                 return res.send(shows);
             } else {
@@ -18,10 +26,17 @@ module.exports = function(app) {
 
     app.post('/shows', function(req, res) {
         var shows = new Shows({
+            user: req.body.user,
             id: req.body.id,
-            name: req.body.name,
-            hobby: req.body.hobby,
-            favoriteMusic: req.body.favoriteMusic
+            title: req.body.title,
+            body: req.body.body,
+            bandsWith: req.body.bandsWith,
+            place: req.body.place,
+            datePublished: req.body.datePublished,
+            dateShow: req.body.dateShow,
+            hourShow: req.body.hourShow,
+            linkGoogleMaps: req.body.linkGoogleMaps,
+            photoURL: req.body.photoURL
         });
 
         shows.save(function(err) {
@@ -41,8 +56,9 @@ module.exports = function(app) {
         });
     });
 
-    app.put('/shows/:id', function(req, res) {
+    app.put('/shows', function(req, res) {
         return Shows.findOne({
+            "user": req.body.user,
             "id": req.params.id
         }, function(err, shows) {
             if (!shows) {
@@ -52,10 +68,17 @@ module.exports = function(app) {
                 });
             }
 
+            if (req.body.user) shows.user = req.body.user;
             if (req.body.id) shows.id = req.body.id;
-            if (req.body.name) shows.name = req.body.name;
-            if (req.body.hobby) shows.hobby = req.body.hobby;
-            if (req.body.favoriteMusic) shows.favoriteMusic = req.body.favoriteMusic;
+            if (req.body.title) shows.title = req.body.title;
+            if (req.body.body) shows.body = req.body.body;
+            if (req.body.bandsWith) shows.bandsWith = req.body.bandsWith;
+            if (req.body.place) shows.place = req.body.place;
+            if (req.body.datePublished) shows.datePublished = req.body.datePublished;
+            if (req.body.dateShow) shows.dateShow = req.body.dateShow;
+            if (req.body.hourShow) shows.hourShow = req.body.hourShow;
+            if (req.body.linkGoogleMaps) shows.linkGoogleMaps = req.body.linkGoogleMaps;
+            if (req.body.photoURL) shows.photoURL = req.body.photoURL;
 
             return shows.save(function(err) {
                 if (!err) {
@@ -85,8 +108,9 @@ module.exports = function(app) {
         });
     });
 
-    app.delete('/shows/:id', function(req, res) {
+    app.delete('/shows/:user/:id', function(req, res) {
         return Shows.findOne({
+            "user": req.params.user,
             "id": req.params.id
         }, function(err, shows) {
             if (!shows) {

@@ -13,12 +13,14 @@ app.controller('UserCtrl', function($scope, $http, $window) {
             .post('/login', $scope.user)
             .success(function(data, status, headers, config) {
                 $window.sessionStorage.token = data.token;
+                $window.sessionStorage.user = data.user;
                 $window.location = "/home";
                 $scope.showWarning = false;
             })
             .error(function(data, status, headers, config) {
                 // Erase the token if the user fails to log in
                 delete $window.sessionStorage.token;
+                delete $window.sessionStorage.user;
                 $scope.showWarning = true;
             });
     };

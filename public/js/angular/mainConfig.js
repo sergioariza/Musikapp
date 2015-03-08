@@ -3,36 +3,6 @@
 var app = angular.module("app", ['ngRoute', 'appServices']);
 var appServices = angular.module('appServices', []);
 
-/*
-var options = {};
-options.api = {};
-options.api.base_url = "http://localhost:3001";
-*/
-
-/*
-var checkLoggedin = function($q, $timeout, $http, $location, $window, UserServices){
-	var deferred = $q.defer();
-		
-	UserServices.loggedin().success(function(user){
-		if (user !== '0'){
-			$timeout(deferred.resolve, 0);
-		}
-		else {
-			UserServices.logout().success(function(data) {
-				$timeout(function(){ deferred.reject(); }, 0);
-				delete $window.sessionStorage.token;
-		        $window.location = "/";
-		    }).error(function(status, data) {
-		            console.log(status);
-		            console.log(data);
-		        }
-			);
-		}
-	});
-		
-	return deferred.promise;
-};
-*/
 var isLogged = function($q, $timeout, $http, $location, $window, UserServices) {
     if (!$window.sessionStorage.token) {
         UserServices.logout()
@@ -41,6 +11,7 @@ var isLogged = function($q, $timeout, $http, $location, $window, UserServices) {
                     deferred.reject();
                 }, 0);
                 delete $window.sessionStorage.token;
+                delete $window.sessionStorage.user;
                 $window.location = "/";
             })
             .error(function(status, data) {
@@ -105,7 +76,10 @@ app.factory('authInterceptor', function($rootScope, $q, $window) {
                     $timeout(function() {
                         deferred.reject();
                     }, 0);
+
                     delete $window.sessionStorage.token;
+                    delete $window.sessionStorage.user;
+                    
                     $window.location = "/";
                 }).error(function(status, data) {
                     console.log(status);

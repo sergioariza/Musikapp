@@ -35,7 +35,8 @@ module.exports = function(app, passport, jwt, secret) {
             expiresInMinutes: 60
         });
         res.json({
-            token: token
+            token: token,
+            user: req.user.username
         });
         res.redirect('/home');
     });

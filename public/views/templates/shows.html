@@ -1,70 +1,132 @@
-<div class="container">
-  <div class="jumbotron">
-    <h2>Conciertos</h2>
-    <p>Esta es la sección de conciertos de tu aplicación móvil. En la siguiente tabla se muestran los conciertos que actualmente los usuarios de tu aplicación móvil pueden encontrar:</p>
-    <table class="table table-striped table-bordered" width="100%">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Hobby</th>
-          <th>Favorite Music</th>
-          <th>Editar</th>
-          <th>Eliminar</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr ng-repeat="x in shows">
-          <td>{{ x.name }}</td>
-          <td>{{ x.hobby }}</td>
-          <td>{{ x.favoriteMusic }}</td>
-          <td width="90">
-            <button class="btn" ng-click="editItem(x.id)">
-              <span class="glyphicon glyphicon-pencil"></span>
-              &nbsp;&nbsp;Editar
-            </button>
-          </td>
-          <td width="50" align="center">
-            <button type="button" ng-click="removeItem(x, x.id)" class="btn btn-sm btn-danger">
-              <i class="glyphicon glyphicon-remove-circle"></i>
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+<div class="container" style="min-width: 1100px;">
+    <div class="jumbotron">
+        <h2>Conciertos</h2>
+        <p>Esta es la sección de conciertos de tu aplicación móvil. En la siguiente tabla se muestran los conciertos que actualmente los usuarios de tu aplicación móvil pueden encontrar:</p>
+        <table class="table table-striped table-bordered" width="100%">
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Descripción</th>
+                    <th>Bandas</th>
+                    <th>Lugar</th>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>Publicación </th>
+                    <th>Google Map</th>
+                    <th>Foto</th>
+                    <th>Editar</th>
+                    <th>Eliminar</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="x in shows">
+                    <td>{{ x.title }}</td>
+                    <td>{{ x.body }}</td>
+                    <td>{{ x.bandsWith }}</td>
+                    <td>{{ x.place }}</td>
+                    <td>{{ x.dateShow }}</td>
+                    <td>{{ x.hourShow }}</td>
+                    <td>{{ x.datePublished }}</td>
+                    <td>{{ x.linkGoogleMaps }}</td>
+                    <td>{{ x.photoURL }}</td>
+                    <td width="90">
+                        <button class="btn" ng-click="editItem(x.id)">
+                            <span class="glyphicon glyphicon-pencil"></span> &nbsp;&nbsp;Editar
+                        </button>
+                    </td>
+                    <td width="50" align="center">
+                        <button type="button" ng-click="removeItem(x, x.id)" class="btn btn-sm btn-danger">
+                            <i class="glyphicon glyphicon-remove-circle"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
-    <hr>
-    <button class="btn btn-success" ng-click="editItem('new')">
-      <span class="glyphicon glyphicon-user"></span>  Publicar nuevo concierto
-    </button>
-    <hr>
+        <hr>
+        <button class="btn btn-success" ng-click="editItem('new')">
+            <span class="glyphicon glyphicon-user"></span>  Publicar nuevo concierto
+        </button>
+        <hr>
 
-    <h3 ng-hide="edit">Publicar nuevo concierto:</h3>
-    <h3 ng-show="edit">Editar concierto:</h3>
+        <h3 ng-hide="edit">Publicar nuevo concierto:</h3>
+        <h3 ng-show="edit">Editar concierto:</h3>
 
-    <form class="form-horizontal">
-      <div class="form-group">
-        <label class="col-sm-2 control-label">Name:</label>
-        <div class="col-sm-10">
-        <input type="text" ng-model="name" placeholder="Name">
-        </div>
-      </div> 
-      <div class="form-group">
-        <label class="col-sm-2 control-label">Hobby:</label>
-        <div class="col-sm-10">
-        <input type="text" ng-model="hobby" placeholder="Hobby">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="col-sm-2 control-label">Favorite Music:</label>
-        <div class="col-sm-10">
-        <input type="text" ng-model="favoriteMusic" placeholder="Favorite Music">
-        </div>
-      </div>
-    </form>
+        <form class="form-horizontal">
+            <div class="form-group">
+                <label class="col-xs-2 control-label">Título:</label>
+                <div class="col-xs-10">
+                    <input class="form-control" type="text" ng-model="title" placeholder="Título">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">Descripción:</label>
+                <div class="col-xs-10">
+                    <textarea class="span6 form-control" rows="5" ng-model="body" placeholder="Descripción del concierto"></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">Bandas:</label>
+                <div class="col-xs-10">
+                    <input class="form-control" type="text" ng-model="bandsWith" placeholder="Bandas invitadas o que comparten cartel">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">Lugar:</label>
+                <div class="col-xs-10">
+                    <input class="form-control" type="text" ng-model="place" placeholder="Lugar del concierto">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">Fecha:</label>
+                <div class="col-xs-2">
+                    <input class="form-control" type="text" ng-model="dateShow" placeholder="DD-MM-AAAA">
+                </div>
+                <label class="col-xs-1 control-label">Hora:</label>
+                <div class="col-xs-2">
+                    <input class="form-control" type="text" ng-model="hourShow" placeholder="hh:mm">
+                </div>
+                <label class="col-xs-2 control-label">Publicado:</label>
+                <div class="col-xs-3">
+                    <input class="form-control" type="text" ng-model="datePublished" placeholder="DD-MM-AAAA hh:mm">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">URL de Google Maps:</label>
+                <div class="col-xs-8">
+                    <input id="location-address" type="text" class="form-control" ng-model="linkGoogleMaps" placeholder="Calle, ciudad, etc">
+                </div>
+                <div class="col-xs-2" style="position: relative;">
+                    <button id="map-address-btn" class="btn btn-primary" style="position: absolute; right: 16px;"><span>Encuéntralo</span>
+                    </button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">Preview de Google Maps:</label>
+                <div class="col-xs-10">
+                    <img id="map-none" class="img-responsive" style="max-width: 100%; height: 400px;" src="http://placehold.it/950x400&text=No+hay+mapa+seleccionado">
+                    <div id="map-canvas" style="max-width: 100%; height: 400px;"></div>
+                </div>
+            </div>
+            <br/>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">URL de foto:</label>
+                <div class="col-xs-10">
+                    <input type="text" class="form-control" ng-model="photoURL" placeholder="URL de foto">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">Preview de foto:</label>
+                <div class="col-xs-10">
+                    <img class="img-responsive" style="max-width: 100%" src="http://placehold.it/950x300&text=No+hay+fotografía+seleccionada" ng-if="photoURL == ''">
+                    <img class="img-responsive" style="max-width: 100%" ng-src="{{ photoURL }}" ng-if="photoURL != ''" onerror="this.style.display='none'">
+                </div>
+            </div>
+        </form>
 
-    <hr>
-    <button class="btn btn-success" ng-click="saveItem()" ng-disabled="incomplete">
-      <span class="glyphicon glyphicon-save"></span>  Guardar cambios
-    </button>
-  </div>
+        <hr>
+        <button class="btn btn-success" ng-click="saveItem()" ng-disabled="incomplete">
+            <span class="glyphicon glyphicon-save"></span>  Guardar cambios
+        </button>
+    </div>
 </div>

@@ -1,9 +1,17 @@
 module.exports = function(app) {
     //News model
     var News = require('../models/NewsModel.js');
+    var expressJwt = require('express-jwt');
+    var secret = require('../../secret.js');
 
-    app.get('/news', function(req, res) {
-        return News.find(function(err, news) {
+    app.use('/news', expressJwt({
+        secret: secret.secretToken
+    }));
+    
+    app.get('/news/:user', function(req, res) {
+        return News.find({
+            "user": req.params.user
+        }, function(err, news) {
             if (!err) {
                 return res.send(news);
             } else {
@@ -16,12 +24,16 @@ module.exports = function(app) {
         });
     });
 
-    app.post('/news', function(req, res) {
+    app.post('/news', expressJwt({
+        secret: secret.secretToken
+    }), function(req, res) {
         var news = new News({
+            user: req.body.user,
             id: req.body.id,
-            name: req.body.name,
-            hobby: req.body.hobby,
-            favoriteMusic: req.body.favoriteMusic
+            title: req.body.title,
+            body: req.body.body,
+            date: req.body.date,
+            photoURL: req.body.photoURL
         });
 
         news.save(function(err) {
@@ -41,9 +53,12 @@ module.exports = function(app) {
         });
     });
 
-    app.put('/news/:id', function(req, res) {
+    app.put('/news', expressJwt({
+        secret: secret.secretToken
+    }), function(req, res) {
         return News.findOne({
-            "id": req.params.id
+            "user": req.body.user,
+            "id": req.body.id
         }, function(err, news) {
             if (!news) {
                 res.statusCode = 404;
@@ -52,10 +67,12 @@ module.exports = function(app) {
                 });
             }
 
+            if (req.body.user) news.user = req.body.user;
             if (req.body.id) news.id = req.body.id;
-            if (req.body.name) news.name = req.body.name;
-            if (req.body.hobby) news.hobby = req.body.hobby;
-            if (req.body.favoriteMusic) news.favoriteMusic = req.body.favoriteMusic;
+            if (req.body.title) news.title = req.body.title;
+            if (req.body.body) news.body = req.body.body;
+            if (req.body.date) news.date = req.body.date;
+            if (req.body.photoURL) news.photoURL = req.body.photoURL;
 
             return news.save(function(err) {
                 if (!err) {
@@ -85,8 +102,11 @@ module.exports = function(app) {
         });
     });
 
-    app.delete('/news/:id', function(req, res) {
+    app.delete('/news/:user/:id', expressJwt({
+        secret: secret.secretToken
+    }), function(req, res) {
         return News.findOne({
+            "user": req.params.user,
             "id": req.params.id
         }, function(err, news) {
             if (!news) {

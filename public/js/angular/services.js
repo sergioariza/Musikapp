@@ -6,54 +6,53 @@ appServices.factory('UserServices', function($http) {
     };
 });
 
-appServices.factory('NewsServices', function($http) {
+appServices.factory('NewsServices', function($window, $http) {
     return {
-    	getAllNews: function() {
-            return $http.get("/news");
-            //return $http({url: '/news', method: 'GET'})
+        getAllNews: function(user) {
+            return $http.get("/news/" + user);
         },
         updateNews: function(newItem) {
-            return $http.put("/news/" + newItem.id, newItem);
+            return $http.put("/news", newItem);
         },
         createNews: function(newItem) {
             return $http.post("/news", newItem);
         },
-        removeNews: function(id) {
-            return $http.delete("/news/" + id);
+        removeNews: function(user, id) {
+            return $http.delete("/news/" + user + "/" + id);
         }
     };
 });
 
 appServices.factory('ShowsServices', function($http) {
     return {
-    	getAllShows: function() {
-            return $http.get("/shows");
+        getAllShows: function(user) {
+            return $http.get("/shows/" + user);
         },
-        updateShows: function(newItem) {
-            return $http.put("/shows/" + newItem.id, newItem);
+        updateShows: function(showItem) {
+            return $http.put("/shows" + showItem);
         },
-        createShows: function(newItem) {
-            return $http.post("/shows", newItem);
+        createShows: function(showItem) {
+            return $http.post("/shows", showItem);
         },
-        removeShows: function(id) {
-            return $http.delete("/shows/" + id);
+        removeShows: function(user, id) {
+            return $http.delete("/shows/" + user + "/" + id);
         }
     };
 });
 
 appServices.factory('VideosServices', function($http) {
     return {
-    	getAllVideos: function() {
-            return $http.get("/videos");
+        getAllVideos: function(user) {
+            return $http.get("/videos/" + user);
         },
-        updateVideos: function(newItem) {
-            return $http.put("/videos/" + newItem.id, newItem);
+        updateVideos: function(videoItem) {
+            return $http.put("/videos", videoItem);
         },
-        createVideos: function(newItem) {
-            return $http.post("/videos", newItem);
+        createVideos: function(videoItem) {
+            return $http.post("/videos", videoItem);
         },
-        removeVideos: function(id) {
-            return $http.delete("/videos/" + id);
+        removeVideos: function(user, id) {
+            return $http.delete("/videos/" + user + "/" + id);
         }
     };
 });

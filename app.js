@@ -26,11 +26,6 @@ app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use('/', express.static(__dirname + '/'));
-app.use(function(err, req, res, next) {
-    if (err.constructor.name === 'UnauthorizedError') {
-        res.status(401).send('Unauthorized');
-    }
-});
 
 //Development only
 if ('development' == app.get('env')) {
@@ -43,18 +38,11 @@ var configNewsAPI = require('./api/db/apiServices/NewsAPI.js')(app);
 var configShowsAPI = require('./api/db/apiServices/ShowsAPI.js')(app);
 var configVideosAPI = require('./api/db/apiServices/VideosAPI.js')(app);
 
-//Protect API Services
-app.use('/news', expressJwt({
-    secret: secret.secretToken
-}));
-
-app.use('/shows', expressJwt({
-    secret: secret.secretToken
-}));
-
-app.use('/videos', expressJwt({
-    secret: secret.secretToken
-}));
+app.use(function(err, req, res, next) {
+    if (err.constructor.name === 'UnauthorizedError') {
+        res.status(401).send('Unauthorized');
+    }
+});
 
 //PassportJS main config
 passport.serializeUser(function(user, done) {

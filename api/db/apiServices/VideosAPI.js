@@ -1,9 +1,17 @@
 module.exports = function(app) {
     //Videos model
     var Videos = require('../models/VideosModel.js');
+    var expressJwt = require('express-jwt');
+    var secret = require('../../secret.js');
 
-    app.get('/videos', function(req, res) {
-        return Videos.find(function(err, videos) {
+    app.use('/videos', expressJwt({
+        secret: secret.secretToken
+    }));
+
+    app.get('/videos/:user', function(req, res) {
+        return Videos.find({
+            "user": req.params.user
+        }, function(err, videos) {
             if (!err) {
                 return res.send(videos);
             } else {
@@ -16,12 +24,15 @@ module.exports = function(app) {
         });
     });
 
-    app.post('/videos', function(req, res) {
+    app.post('/videos', expressJwt({
+        secret: secret.secretToken
+    }), function(req, res) {
         var videos = new Videos({
+            user: req.body.user,
             id: req.body.id,
-            name: req.body.name,
-            hobby: req.body.hobby,
-            favoriteMusic: req.body.favoriteMusic
+            title: req.body.title,
+            description: req.body.description,
+            youtubeURL: req.body.youtubeURL
         });
 
         videos.save(function(err) {
@@ -41,9 +52,12 @@ module.exports = function(app) {
         });
     });
 
-    app.put('/videos/:id', function(req, res) {
+    app.put('/videos/:user/:id', expressJwt({
+        secret: secret.secretToken
+    }), function(req, res) {
         return Videos.findOne({
-            "id": req.params.id
+            "user": req.body.user,
+            "id": req.body.id
         }, function(err, videos) {
             if (!shows) {
                 res.statusCode = 404;
@@ -52,10 +66,11 @@ module.exports = function(app) {
                 });
             }
 
+            if (req.body.user) videos.user = req.body.user;
             if (req.body.id) videos.id = req.body.id;
-            if (req.body.name) videos.name = req.body.name;
-            if (req.body.hobby) videos.hobby = req.body.hobby;
-            if (req.body.favoriteMusic) videos.favoriteMusic = req.body.favoriteMusic;
+            if (req.body.title) videos.title = req.body.title;
+            if (req.body.description) videos.description = req.body.description;
+            if (req.body.youtubeURL) videos.youtubeURL = req.body.youtubeURL;
 
             return videos.save(function(err) {
                 if (!err) {
@@ -85,8 +100,11 @@ module.exports = function(app) {
         });
     });
 
-    app.delete('/videos/:id', function(req, res) {
+    app.delete('/videos/:user/:id', expressJwt({
+        secret: secret.secretToken
+    }), function(req, res) {
         return Videos.findOne({
+            "user": req.params.user,
             "id": req.params.id
         }, function(err, videos) {
             if (!videos) {
