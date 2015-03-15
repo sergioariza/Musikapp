@@ -13,6 +13,7 @@ module.exports = function(app) {
             "user": req.params.user
         }, function(err, videos) {
             if (!err) {
+                res.header("Access-Control-Allow-Origin", "*");
                 return res.send(videos);
             } else {
                 res.statusCode = 500;

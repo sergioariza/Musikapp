@@ -7,12 +7,13 @@ module.exports = function(app) {
     app.use('/shows', expressJwt({
         secret: secret.secretToken
     }));
-    
+
     app.get('/shows/:user', function(req, res) {
         return Shows.find({
             "user": req.params.user
         }, function(err, shows) {
             if (!err) {
+                res.header("Access-Control-Allow-Origin", "*");
                 return res.send(shows);
             } else {
                 res.statusCode = 500;

@@ -50,11 +50,13 @@ app.controller("newsController", function newsController($scope, $http, $window,
             $scope.photoURL = '';
         } else {
             $scope.edit = true;
-            $scope.id = $scope.news[id].id;
-            $scope.title = $scope.news[id].title;
-            $scope.body = $scope.news[id].body;
-            $scope.date = $scope.news[id].date;
-            $scope.photoURL = $scope.news[id].photoURL;
+            $scope.id = id;
+            var i = 0;
+            while (i < $scope.news.length && ($scope.news[i].id != $scope.id)) i++;
+            $scope.title = $scope.news[i].title;
+            $scope.body = $scope.news[i].body;
+            $scope.date = $scope.news[i].date;
+            $scope.photoURL = $scope.news[i].photoURL;
         }
 
         $scope.operationInProgress = true;
@@ -184,16 +186,18 @@ app.controller("showsController", function showsController($scope, $http, $windo
             $scope.photoURL = '';
         } else {
             $scope.edit = true;
-            $scope.id = $scope.shows[id].id;
-            $scope.title = $scope.shows[id].title;
-            $scope.body = $scope.shows[id].body;
-            $scope.bandsWith = $scope.shows[id].bandsWith;
-            $scope.place = $scope.shows[id].place;
-            $scope.dateShow = $scope.shows[id].dateShow;
-            $scope.hourShow = $scope.shows[id].hourShow;
-            $scope.datePublished = $scope.shows[id].datePublished;
-            $scope.linkGoogleMaps = $scope.shows[id].linkGoogleMaps;
-            $scope.photoURL = $scope.shows[id].photoURL;
+            $scope.id = id;
+            var i = 0;
+            while (i < $scope.shows.length && ($scope.shows[i].id != $scope.id)) i++;
+            $scope.title = $scope.shows[i].title;
+            $scope.body = $scope.shows[i].body;
+            $scope.bandsWith = $scope.shows[i].bandsWith;
+            $scope.place = $scope.shows[i].place;
+            $scope.dateShow = $scope.shows[i].dateShow;
+            $scope.hourShow = $scope.shows[i].hourShow;
+            $scope.datePublished = $scope.shows[i].datePublished;
+            $scope.linkGoogleMaps = $scope.shows[i].linkGoogleMaps;
+            $scope.photoURL = $scope.shows[i].photoURL;
             $('#location-address').val($scope.linkGoogleMaps);
             $('#map-address-btn').click();
         }
@@ -350,10 +354,12 @@ app.controller("videosController", function videosController($scope, $http, $win
             $scope.youtubeURL = '';
         } else {
             $scope.edit = true;
-            $scope.id = $scope.videos[id].id;
-            $scope.title = $scope.videos[id].title;
-            $scope.description = $scope.videos[id].description;
-            $scope.youtubeURL = $scope.videos[id].youtubeURL;
+            $scope.id = id;
+            var i = 0;
+            while (i < $scope.videos.length && ($scope.videos[i].id != $scope.id)) i++;
+            $scope.title = $scope.videos[i].title;
+            $scope.description = $scope.videos[i].description;
+            $scope.youtubeURL = $scope.videos[i].youtubeURL;
         }
 
         changedYoutubeURL();
