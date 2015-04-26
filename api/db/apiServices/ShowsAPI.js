@@ -25,7 +25,9 @@ module.exports = function(app) {
         });
     });
 
-    app.post('/shows', function(req, res) {
+    app.post('/shows', expressJwt({
+        secret: secret.secretToken
+    }), function(req, res) {
         var shows = new Shows({
             user: req.body.user,
             id: req.body.id,
@@ -57,10 +59,12 @@ module.exports = function(app) {
         });
     });
 
-    app.put('/shows', function(req, res) {
+    app.put('/shows', expressJwt({
+        secret: secret.secretToken
+    }), function(req, res) {
         return Shows.findOne({
             "user": req.body.user,
-            "id": req.params.id
+            "id": req.body.id
         }, function(err, shows) {
             if (!shows) {
                 res.statusCode = 404;
@@ -109,7 +113,9 @@ module.exports = function(app) {
         });
     });
 
-    app.delete('/shows/:user/:id', function(req, res) {
+    app.delete('/shows/:user/:id', expressJwt({
+        secret: secret.secretToken
+    }), function(req, res) {
         return Shows.findOne({
             "user": req.params.user,
             "id": req.params.id

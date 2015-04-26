@@ -53,7 +53,7 @@ module.exports = function(app) {
         });
     });
 
-    app.put('/videos/:user/:id', expressJwt({
+    app.put('/videos', expressJwt({
         secret: secret.secretToken
     }), function(req, res) {
         return Videos.findOne({

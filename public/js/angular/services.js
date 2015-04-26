@@ -29,7 +29,7 @@ appServices.factory('ShowsServices', function($http) {
             return $http.get("/shows/" + user);
         },
         updateShows: function(showItem) {
-            return $http.put("/shows" + showItem);
+            return $http.put("/shows", showItem);
         },
         createShows: function(showItem) {
             return $http.post("/shows", showItem);
