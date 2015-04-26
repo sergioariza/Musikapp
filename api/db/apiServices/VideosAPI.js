@@ -60,7 +60,7 @@ module.exports = function(app) {
             "user": req.body.user,
             "id": req.body.id
         }, function(err, videos) {
-            if (!shows) {
+            if (!videos) {
                 res.statusCode = 404;
                 return res.send({
                     error: 'Not found'
