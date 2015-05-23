@@ -43,7 +43,7 @@ app.controller("newsController", function newsController($scope, $http, $window,
         if (id == 'new') {
             $scope.edit = false;
             $scope.incomplete = true;
-            $scope.id = $scope.news.length;
+            $scope.id = UserServices.getMaxId($scope.news) + 1;
             $scope.title = '';
             $scope.body = '';
             $scope.date = '';
@@ -174,7 +174,7 @@ app.controller("showsController", function showsController($scope, $http, $windo
         if (id == 'new') {
             $scope.edit = false;
             $scope.incomplete = true;
-            $scope.id = $scope.shows.length;
+            $scope.id = UserServices.getMaxId($scope.news) + 1;
             $scope.title = '';
             $scope.body = '';
             $scope.bandsWith = '';
@@ -348,7 +348,7 @@ app.controller("videosController", function videosController($scope, $http, $win
         if (id == 'new') {
             $scope.edit = false;
             $scope.incomplete = true;
-            $scope.id = $scope.videos.length;
+            $scope.id = UserServices.getMaxId($scope.news) + 1;
             $scope.title = '';
             $scope.description = '';
             $scope.youtubeURL = '';

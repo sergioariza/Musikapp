@@ -2,6 +2,15 @@ appServices.factory('UserServices', function($http) {
     return {
         logout: function() {
             return $http.post('/logout');
+        },
+        getMaxId: function(arrayInput) {
+            var maxIndex = -1;
+            arrayInput.forEach(function(entry) {
+                if (entry.id > maxIndex ) {
+                    maxIndex = entry.id;
+                }
+            });
+            return maxIndex;
         }
     };
 });

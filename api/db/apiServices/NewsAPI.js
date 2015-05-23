@@ -25,6 +25,24 @@ module.exports = function(app) {
         });
     });
 
+    app.get('/news/:user/:begin/:end', function(req, res) {
+        return News.find({
+            "user": req.params.user,
+            "id": {$gte: req.params.begin, $lte: req.params.end}
+        }, function(err, news) {
+            if (!err) {
+                res.header("Access-Control-Allow-Origin", "*");
+                return res.send(news);
+            } else {
+                res.statusCode = 500;
+                console.log('Internal error(%d): %s', res.statusCode, err.message);
+                return res.send({
+                    error: 'Server error'
+                });
+            }
+        });
+    });
+
     app.post('/news', expressJwt({
         secret: secret.secretToken
     }), function(req, res) {
