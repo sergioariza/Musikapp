@@ -26,13 +26,13 @@ module.exports = function(app) {
     });
 
     app.get('/videos/:user/:begin/:end', function(req, res) {
-        return News.find({
+        return Videos.find({
             "user": req.params.user,
             "id": {$gte: req.params.begin, $lte: req.params.end}
-        }, function(err, news) {
+        }, function(err, videos) {
             if (!err) {
                 res.header("Access-Control-Allow-Origin", "*");
-                return res.send(news);
+                return res.send(videos);
             } else {
                 res.statusCode = 500;
                 console.log('Internal error(%d): %s', res.statusCode, err.message);
