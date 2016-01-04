@@ -1,27 +1,14 @@
 {
   "name": "application-name",
-  "version": "0.1.2",
   "mains": "app.js",
+  "dependencies": {
+    "jsonwebtoken": "~1.1.2",
+    "express": "~4.9.8",
+    "body-parser": "~1.9.2",
+    "mongoose": "~3.8.19",
+    "morgan": "~1.5.0"
+  },
   "scripts": {
     "start": "node app.js"
-  },
-  "dependencies": {
-    "express": "3.4.8",
-    "express-jwt": "1.0.0",
-    "jsonwebtoken": "3.2.2",
-    "body-parser": "1.10.1",
-    "passport": "0.2.0",
-    "passport-local": "1.0.0",
-    "mongoose": "3.8.8",
-    "jade": "*"
-  },
-  "engines": {
-    "node": "0.10.33"
-  },
-  "keywords": [
-    "node",
-    "heroku",
-    "express"
-  ],
-  "license": "MIT"
+  }
 }

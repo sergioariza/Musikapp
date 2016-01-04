@@ -1,0 +1,29 @@
+<!DOCTYPE  html>
+<html lang="es" ng-app="app">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" type="text/css" href="styles/login.css" />
+    <link rel="stylesheet" href="styles/main.e564e410.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+
+<body>
+    <div class="container" ng-controller="UserCtrl">
+        <form class="form-signin" ng-submit="submit()">
+            <h2 class="form-signin-heading">Por favor inicie sesión</h2>
+            <input type="email" class="form-control" ng-model="user.username" name="username" placeholder="Dirección de correo" required autofocus>
+            <input type="password" class="form-control" ng-model="user.password" name="password" placeholder="Contraseña" required>
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Iniciar sesión</button>
+        </form>
+        <div class="alert alert-danger" role="alert" ng-show="showWarning">
+            <strong>¡Error!</strong> El email o la contraseña que ha introducido no es correcta. Por favor, vuélvalo a intentar.
+        </div>
+    </div>
+
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type="text/javascript" src="scripts/vendor.ad5f1667.js"></script>
+    <script type="text/javascript" src="scripts/login.js"></script>
+</body>
+
+</html>
